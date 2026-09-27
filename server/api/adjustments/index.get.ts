@@ -1,0 +1,11 @@
+export default defineEventHandler(async (event) => {
+  await requireAuth(event, 'stock.view')
+  const rows = await AdjustmentModel.find()
+    .sort({ createdAt: -1 })
+    .limit(300)
+    .populate('location', LOCATION_REF)
+    .populate('user', USER_REF)
+    .populate('lines.item', ITEM_REF)
+    .lean()
+  return ok(rows)
+})
