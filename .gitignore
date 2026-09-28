@@ -22,6 +22,5 @@ logs
 .env
 .env.*
 !.env.example
-/mobile
 # Vercel (local builds / CLI link)
 .vercel

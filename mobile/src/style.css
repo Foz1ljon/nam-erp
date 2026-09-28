@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Same brand tokens as the ERP (app/assets/css/main.css). */
+@theme {
+  --color-primary: #1d4ed8;
+  --color-surface: #f5f7fb;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 10px;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
