@@ -2,9 +2,11 @@ import { randomUUID } from 'node:crypto'
 import bigInt from 'big-integer'
 import type { Types } from 'mongoose'
 import { Api, TelegramClient } from 'telegram'
-import { NewMessage, type NewMessageEvent } from 'telegram/events'
-import { computeCheck } from 'telegram/Password'
-import { StringSession } from 'telegram/sessions'
+// Explicit file paths: "telegram" is CommonJS without an exports map, so Node's ESM loader in the
+// production build cannot resolve bare directory/extensionless subpaths like "telegram/events".
+import { NewMessage, type NewMessageEvent } from 'telegram/events/index.js'
+import { computeCheck } from 'telegram/Password.js'
+import { StringSession } from 'telegram/sessions/index.js'
 
 // Personal Telegram accounts connected over MTProto — the same protocol the official apps use.
 // The ERP appears in Telegram → Settings → Devices as "NamMotors ERP" and can be terminated there.
