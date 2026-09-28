@@ -68,7 +68,7 @@ async function createOrder() {
             <div class="grid grid-cols-1 gap-2 md:grid-cols-12">
               <n-select v-model:value="activity.type" :options="typeOptions" class="md:col-span-3" />
               <n-input v-model:value="activity.text" placeholder="Nima bo'ldi yoki nima qilish kerak" class="md:col-span-5" />
-              <n-date-picker v-if="activity.type === 'task' || activity.type === 'meeting'" v-model:value="activity.dueAt" type="datetime" clearable placeholder="Muddat" class="md:col-span-3" />
+              <n-date-picker v-if="activity.type === 'task' || activity.type === 'meeting'" v-model:value="activity.dueAt" type="datetime" format="dd.MM.yyyy HH:mm" clearable placeholder="Muddat" class="md:col-span-3" />
               <n-button type="primary" attr-type="submit" :loading="saving" class="md:col-span-1">+</n-button>
             </div>
           </n-form>

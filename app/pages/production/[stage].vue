@@ -96,7 +96,7 @@ function onSaved(res: OperationSaved) {
     </PageHeader>
 
     <div class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3" data-tour="stage-filters">
-      <n-date-picker v-model:value="range" type="daterange" clearable class="md:col-span-1" />
+      <n-date-picker v-model:value="range" type="daterange" format="dd.MM.yyyy" clearable class="md:col-span-1" />
       <UserSelect v-model="worker" :roles="config.roles" placeholder="Barcha ishchilar" />
     </div>
 

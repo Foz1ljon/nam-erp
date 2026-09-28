@@ -44,11 +44,8 @@ interface StockValueRow {
 
 const tab = ref<'production' | 'workers' | 'qc' | 'sales' | 'stock'>('production')
 // Shared between server render and hydration (a fresh `new Date()` on each side would change the request key).
-const range = useState<[number, number]>('reports:range', () => {
-  const now = new Date()
-  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
-  return [new Date(now.getFullYear(), now.getMonth(), 1).getTime(), endOfToday.getTime()]
-})
+// Current month in Tashkent time, whatever zone the server renders in.
+const range = useState<[number, number]>('reports:range', () => [startOfMonth().getTime(), endOfDay().getTime()])
 const query = computed(() => ({ from: new Date(range.value[0]).toISOString(), to: new Date(range.value[1]).toISOString() }))
 
 const { data: production, pending: p1 } = await useApiData<ProductionReport>('/api/reports/production', { query, default: () => ({ outputs: [], wastes: [] }) })
@@ -170,7 +167,7 @@ const stockTotal = computed(() => stockValue.value.reduce((s, r) => s + r.costVa
   <div>
     <PageHeader title="Hisobotlar" subtitle="Ishlab chiqarish, hodimlar unumdorligi, sifat, sotuv va ombor qiymati" tour="reports">
       <template #actions>
-        <n-date-picker v-model:value="range" type="daterange" data-tour="reports-range" />
+        <n-date-picker v-model:value="range" type="daterange" format="dd.MM.yyyy" data-tour="reports-range" />
       </template>
     </PageHeader>
 

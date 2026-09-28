@@ -72,7 +72,7 @@ const columns: DataTableColumns<ReceiptDto> = [
         </n-button>
       </template>
     </PageHeader>
-    <div class="mb-4 max-w-sm" data-tour="receipt-range"><n-date-picker v-model:value="range" type="daterange" clearable /></div>
+    <div class="mb-4 max-w-sm" data-tour="receipt-range"><n-date-picker v-model:value="range" type="daterange" format="dd.MM.yyyy" clearable /></div>
     <n-card size="small" data-tour="receipt-table">
       <n-data-table :columns="columns" :data="receipts" :loading="pending" :pagination="{ pageSize: 20 }" :scroll-x="1000" :row-key="(r: ReceiptDto) => r._id" size="small" />
     </n-card>

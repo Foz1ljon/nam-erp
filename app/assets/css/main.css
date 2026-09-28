@@ -41,8 +41,18 @@ body {
   font-family: var(--font-sans);
   color: var(--color-ink);
   border-radius: var(--radius-card);
-  max-width: 380px;
+  /* Never wider than a phone screen minus a small gutter. */
+  max-width: min(380px, calc(100vw - 24px));
   padding: 18px;
+}
+@media (max-width: 480px) {
+  .driver-popover.nm-tour {
+    padding: 14px;
+  }
+  .driver-popover.nm-tour .driver-popover-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 .driver-popover.nm-tour .driver-popover-title {
   font-size: 16px;

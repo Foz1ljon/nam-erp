@@ -89,7 +89,7 @@ const recentColumns: DataTableColumns<OperationDto> = [
           <ul v-else class="m-0 flex list-none flex-col gap-2 p-0">
             <li v-for="s in data.finishedStock" :key="s.item._id" class="flex justify-between gap-2 text-sm">
               <span>{{ s.item.name }}</span>
-              <span class="font-semibold tabular-nums">{{ fmtQty(s.qty, s.item.unit) }}</span>
+              <span class="shrink-0 font-semibold whitespace-nowrap tabular-nums">{{ fmtQty(s.qty, s.item.unit) }}</span>
             </li>
           </ul>
         </n-card>
@@ -99,7 +99,7 @@ const recentColumns: DataTableColumns<OperationDto> = [
           <ul v-else class="m-0 flex list-none flex-col gap-2 p-0">
             <li v-for="s in data.lowStock" :key="s.item._id" class="flex justify-between gap-2 text-sm">
               <span>{{ s.item.name }}</span>
-              <span class="tabular-nums text-amber-700">{{ fmtQty(s.qty) }} / {{ fmtQty(s.minStock, s.item.unit) }}</span>
+              <span class="shrink-0 whitespace-nowrap tabular-nums text-amber-700">{{ fmtQty(s.qty) }} / {{ fmtQty(s.minStock, s.item.unit) }}</span>
             </li>
           </ul>
         </n-card>
@@ -108,7 +108,7 @@ const recentColumns: DataTableColumns<OperationDto> = [
           <ul class="m-0 flex list-none flex-col gap-2 p-0">
             <li v-for="l in data.locationTotals" :key="l.location._id" class="flex justify-between gap-2 text-sm">
               <span>{{ l.location.name }}</span>
-              <span class="tabular-nums text-slate-600">{{ fmtQty(l.qtyKg) }} kg · {{ fmtQty(l.qtyPcs) }} dona</span>
+              <span class="shrink-0 whitespace-nowrap tabular-nums text-slate-600">{{ fmtQty(l.qtyKg) }} kg · {{ fmtQty(l.qtyPcs) }} dona</span>
             </li>
           </ul>
         </n-card>

@@ -125,7 +125,7 @@ const historyColumns: DataTableColumns<QcInspectionDto> = [
 
       <n-tab-pane name="history" tab="Tarix">
         <div class="mb-3 max-w-sm">
-          <n-date-picker v-model:value="range" type="daterange" clearable />
+          <n-date-picker v-model:value="range" type="daterange" format="dd.MM.yyyy" clearable />
         </div>
         <n-data-table
           :columns="historyColumns"

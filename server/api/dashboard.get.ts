@@ -4,9 +4,9 @@ import { can } from '../../shared/utils/permissions'
 
 export default defineEventHandler(async (event) => {
   const me = await requireAuth(event)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+  // Day and month in Tashkent time (the server itself runs in UTC on Vercel).
+  const today = startOfDay()
+  const monthStart = startOfMonth()
   const myLocation = me.locationId ? new Types.ObjectId(me.locationId) : null
   const supervisor = SUPERVISOR_ROLES.includes(me.role)
 

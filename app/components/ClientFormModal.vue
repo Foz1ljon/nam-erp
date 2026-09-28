@@ -123,7 +123,7 @@ async function submit() {
         <n-tab-pane name="contract" tab="Shartnoma va to'lov">
           <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2">
             <n-form-item label="Shartnoma raqami"><n-input v-model:value="form.contractNumber" /></n-form-item>
-            <n-form-item label="Shartnoma sanasi"><n-date-picker v-model:value="form.contractDate" type="date" clearable class="w-full" /></n-form-item>
+            <n-form-item label="Shartnoma sanasi"><n-date-picker v-model:value="form.contractDate" type="date" format="dd.MM.yyyy" clearable class="w-full" /></n-form-item>
             <n-form-item label="To'lov muddati (kun)">
               <n-input-number v-model:value="form.paymentTermsDays" :min="0" :max="365" class="w-full" />
             </n-form-item>

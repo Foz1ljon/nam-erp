@@ -73,7 +73,7 @@ const columns: DataTableColumns<AdjustmentDto> = [
   { title: 'Sana', key: 'createdAt', width: 140, render: (r) => fmtDateTime(r.createdAt) },
   { title: 'Joy', key: 'location', render: (r) => r.location.name },
   { title: 'Pozitsiya', key: 'lines', width: 100, render: (r) => r.lines.length },
-  { title: 'Izoh', key: 'note', render: (r) => r.note ?? '' },
+  { title: 'Izoh', key: 'note', render: (r) => r.note || '—' },
   { title: "Mas'ul", key: 'user', render: (r) => r.user.fullName },
 ]
 </script>

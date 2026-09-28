@@ -187,11 +187,8 @@ export const dateRangeQuery = z.object({
 export function dateFilter(range: { from?: Date; to?: Date }) {
   if (!range.from && !range.to) return undefined
   const filter: { $gte?: Date; $lte?: Date } = {}
-  if (range.from) filter.$gte = range.from
-  if (range.to) {
-    const end = new Date(range.to)
-    end.setHours(23, 59, 59, 999)
-    filter.$lte = end
-  }
+  // Whole Tashkent days: the client sends the picked day as a timestamp in its own zone.
+  if (range.from) filter.$gte = startOfDay(range.from)
+  if (range.to) filter.$lte = endOfDay(range.to)
   return filter
 }

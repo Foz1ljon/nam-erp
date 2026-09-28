@@ -25,8 +25,9 @@ export async function generateSerials(count: number): Promise<string[]> {
     { $inc: { seq: count } },
     { upsert: true, returnDocument: 'after', lean: true },
   )
-  const now = new Date()
-  const prefix = `NM-${String(now.getFullYear()).slice(2)}${String(now.getMonth() + 1).padStart(2, '0')}`
+  // Year and month of the Tashkent calendar (the server may run in UTC).
+  const now = new Date(Date.now() + TASHKENT_OFFSET_MS)
+  const prefix = `NM-${String(now.getUTCFullYear()).slice(2)}${String(now.getUTCMonth() + 1).padStart(2, '0')}`
   const first = counter!.seq - count + 1
   return Array.from({ length: count }, (_, i) => `${prefix}-${String(first + i).padStart(6, '0')}`)
 }

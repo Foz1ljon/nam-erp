@@ -45,7 +45,7 @@ const paymentColumns: DataTableColumns<Payment> = [
   { title: 'Usul', key: 'method', width: 140, render: (r) => PAYMENT_METHOD_LABELS[r.method] },
   { title: 'Summa', key: 'amount', align: 'right', render: (r) => fmtMoney(r.amount) },
   { title: 'Qabul qildi', key: 'user', render: (r) => r.user?.fullName ?? '—' },
-  { title: 'Izoh', key: 'note', render: (r) => r.note ?? '' },
+  { title: 'Izoh', key: 'note', render: (r) => r.note || '—' },
 ]
 
 const itemColumns: DataTableColumns<TopItem> = [

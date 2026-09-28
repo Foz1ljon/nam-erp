@@ -50,7 +50,7 @@ const columns: DataTableColumns<StockMoveDto> = [
     render: (r) => h('span', { class: r.qty > 0 ? 'text-emerald-700' : 'text-red-600' }, `${r.qty > 0 ? '+' : ''}${fmtQty(r.qty, r.item.unit)}`),
   },
   { title: 'Hodim', key: 'user', render: (r) => r.user?.fullName ?? '—' },
-  { title: 'Izoh', key: 'note', render: (r) => r.note ?? '' },
+  { title: 'Izoh', key: 'note', render: (r) => r.note || '—' },
 ]
 
 const docOptions = DOC_TYPES.map((d) => ({ label: DOC_TYPE_LABELS[d], value: d }))
@@ -63,7 +63,7 @@ const docOptions = DOC_TYPES.map((d) => ({ label: DOC_TYPE_LABELS[d], value: d }
       <LocationSelect v-model="location" clearable placeholder="Barcha joylar" />
       <ItemSelect v-model="item" clearable placeholder="Barcha mahsulotlar" />
       <n-select v-model:value="docType" :options="docOptions" clearable placeholder="Hujjat turi" />
-      <n-date-picker v-model:value="range" type="daterange" clearable />
+      <n-date-picker v-model:value="range" type="daterange" format="dd.MM.yyyy" clearable />
     </div>
     <n-card size="small" data-tour="moves-table">
       <n-data-table

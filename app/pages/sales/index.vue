@@ -81,7 +81,7 @@ const statusOptions = SALES_STATUSES.map((s) => ({ label: SALES_STATUS_LABELS[s]
     <div class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3" data-tour="sales-filters">
       <n-select v-model:value="status" :options="statusOptions" clearable placeholder="Holat" />
       <CounterpartySelect v-model="customer" type="customer" placeholder="Barcha mijozlar" />
-      <n-date-picker v-model:value="range" type="daterange" clearable />
+      <n-date-picker v-model:value="range" type="daterange" format="dd.MM.yyyy" clearable />
     </div>
 
     <n-card size="small" data-tour="sales-table">

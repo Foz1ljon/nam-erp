@@ -38,8 +38,10 @@ async function loadThread(scroll = true) {
     const res = await $fetch<{ data: Thread }>(`/api/inbox/${selectedId.value}`)
     const grew = res.data.messages.length !== thread.value?.messages.length
     thread.value = res.data
-    const row = conversations.value.find((c) => c._id === selectedId.value)
-    if (row) row.unread = 0
+    // useAsyncData data is a shallowRef in Nuxt 4: replace the list so the unread badge updates.
+    if (conversations.value.some((c) => c._id === selectedId.value && c.unread)) {
+      conversations.value = conversations.value.map((c) => (c._id === selectedId.value ? { ...c, unread: 0 } : c))
+    }
     if (scroll && grew) {
       await nextTick()
       scroller.value?.scrollTo({ top: scroller.value.scrollHeight })
@@ -110,10 +112,9 @@ const managerId = computed({
   set: (v: string | null) => handover(v),
 })
 
+/** "14:05" for today's messages, the date otherwise (Tashkent days, same on server and browser). */
 function timeLabel(value: string) {
-  const d = new Date(value)
-  const today = new Date()
-  return d.toDateString() === today.toDateString() ? fmtDateTime(value).slice(-5) : fmtDate(value)
+  return fmtDate(value) === fmtDate(new Date()) ? fmtDateTime(value).slice(-5) : fmtDate(value)
 }
 </script>
 
