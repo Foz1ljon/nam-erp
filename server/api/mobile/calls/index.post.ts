@@ -25,6 +25,6 @@ export default defineEventHandler(async (event) => {
     tracked: true as const,
     callId: String(call._id),
     leadId: String(call.lead),
-    needsRecording: !call.recording && call.duration > 0,
+    needsRecording: !call.recording && !call.recordingDeletedAt && call.duration > 0,
   })
 })

@@ -4,8 +4,9 @@
  */
 export default defineEventHandler(async (event) => {
   const { device } = await requireDevice(event)
-  const call = await PhoneCallModel.findOne({ _id: paramId(event), device: device._id }).select('recording').lean()
+  const call = await PhoneCallModel.findOne({ _id: paramId(event), device: device._id }).select('recording recordingDeletedAt').lean()
   if (!call) notFound("Qo'ng'iroq topilmadi")
-  if (call.recording) return ok({ alreadyUploaded: true as const, url: null, fields: null })
+  // Already stored, or deleted in the CRM on purpose: either way the phone must not send it (again).
+  if (call.recording || call.recordingDeletedAt) return ok({ alreadyUploaded: true as const, url: null, fields: null })
   return ok({ alreadyUploaded: false as const, ...signedAudioUpload(String(call._id)) })
 })

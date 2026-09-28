@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const { device } = await requireDevice(event)
   const call = await PhoneCallModel.findOne({ _id: paramId(event), device: device._id })
   if (!call) notFound("Qo'ng'iroq topilmadi")
-  if (call.recording) return ok({ callId: String(call._id) })
+  if (call.recording || call.recordingDeletedAt) return ok({ callId: String(call._id) })
 
   const file = (await readMultipartFormData(event))?.find((p) => p.name === 'file' && p.filename)
   if (!file?.filename || !file.data.length) {

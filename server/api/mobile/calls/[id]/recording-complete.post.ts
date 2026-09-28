@@ -19,7 +19,13 @@ export default defineEventHandler(async (event) => {
   if (body.public_id !== recordingPublicId(String(call._id))) {
     throw createError({ statusCode: 400, statusMessage: 'Bad Request', message: 'Yozuv boshqa qo\'ng\'iroqqa tegishli' })
   }
-  call.recording = verifiedUpload(body)
+  const recording = verifiedUpload(body)
+  if (call.recordingDeletedAt) {
+    // Deleted in the CRM while this upload was in flight: remove the fresh copy too.
+    await deleteAudio(recording.publicId)
+    return ok({ callId: String(call._id) })
+  }
+  call.recording = recording
   await call.save()
   return ok({ callId: String(call._id) })
 })

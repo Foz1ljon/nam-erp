@@ -431,6 +431,8 @@ const phoneCallSchema = new Schema(
       ),
       default: null,
     },
+    /** Set when someone deleted the recording in the CRM: the phone must not upload it again. */
+    recordingDeletedAt: { type: Date, default: null },
   },
   opts,
 )

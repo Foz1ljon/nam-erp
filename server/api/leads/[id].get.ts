@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     SalesOrderModel.find({ lead: id }).sort({ createdAt: -1 }).select('number status total paidAmount createdAt').lean(),
     PhoneCallModel.find({ lead: id })
       .sort({ startedAt: -1 })
-      .select('phone contactName direction startedAt duration user recording.format recording.bytes recording.duration')
+      .select('phone contactName direction startedAt duration user recording.format recording.bytes recording.duration recordingDeletedAt')
       .populate({ path: 'user', select: USER_REF })
       .lean(),
   ])

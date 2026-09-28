@@ -51,7 +51,8 @@ export function useApiAction() {
     try {
       const res = await $fetch<ApiResponse<T>>(url, { method: options.method, body: options.body as Record<string, unknown> })
       if (options.success) message.success(options.success)
-      return res.data
+      // `null` means "failed" to callers, so a successful `ok(null)` (delete, toggle) must not look like one.
+      return res.data ?? ({} as T)
     } catch (error) {
       message.error(errorMessage(error), { duration: 6000 })
       return null

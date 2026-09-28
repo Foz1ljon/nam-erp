@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CallOutline } from '@vicons/ionicons5'
+import { CallOutline, TrashOutline } from '@vicons/ionicons5'
 import type { LeadDto, PhoneCallDto } from '#shared/types/models'
 import type { ActivityType, SalesStatus } from '#shared/utils/constants'
 
@@ -11,7 +11,7 @@ type LeadDetails = LeadDto & {
 }
 
 const route = useRoute()
-const { can } = useAuth()
+const { can, user } = useAuth()
 const refs = useRefsStore()
 const { run, pending: saving } = useApiAction()
 const editOpen = ref(false)
@@ -19,6 +19,15 @@ const editOpen = ref(false)
 const { data: lead, refresh } = await useApiData<LeadDetails | null>(() => `/api/leads/${route.params.id}`, { default: () => null })
 if (!lead.value) throw createError({ statusCode: 404, statusMessage: 'Lid topilmadi', fatal: true })
 useHead({ title: () => `${lead.value?.title ?? 'Lid'} — NamMotors ERP` })
+
+/** Same rule as the API: the manager who made the call, directors and admins. */
+function canDeleteRecording(call: PhoneCallDto) {
+  return call.user._id === user.value?.id || user.value?.role === 'admin' || user.value?.role === 'director'
+}
+
+async function deleteRecording(call: PhoneCallDto) {
+  if ((await run(`/api/calls/${call._id}/recording`, { method: 'DELETE', success: "Yozuv o'chirildi" })) !== null) refresh()
+}
 
 const activity = reactive({ type: 'call' as ActivityType, text: '', dueAt: null as number | null })
 const typeOptions = ACTIVITY_TYPES.map((t) => ({ label: ACTIVITY_TYPE_LABELS[t], value: t }))
@@ -99,14 +108,30 @@ async function createOrder() {
                 </span>
                 <span class="text-xs text-slate-500">{{ fmtDateTime(c.startedAt) }} · {{ c.phone }} · {{ c.user.fullName }}</span>
               </div>
-              <audio
-                v-if="c.recording"
-                controls
-                preload="none"
-                class="h-9 w-full"
-                :src="`/api/calls/${c._id}/audio`"
-                :aria-label="`${CALL_DIRECTION_LABELS[c.direction]} yozuvi, ${fmtDateTime(c.startedAt)}`"
-              />
+              <div v-if="c.recording" class="flex items-center gap-2">
+                <audio
+                  controls
+                  preload="none"
+                  class="h-9 min-w-0 flex-1"
+                  :src="`/api/calls/${c._id}/audio`"
+                  :aria-label="`${CALL_DIRECTION_LABELS[c.direction]} yozuvi, ${fmtDateTime(c.startedAt)}`"
+                />
+                <n-popconfirm
+                  v-if="canDeleteRecording(c)"
+                  positive-text="O'chirish"
+                  negative-text="Bekor qilish"
+                  :positive-button-props="{ type: 'error' }"
+                  @positive-click="deleteRecording(c)"
+                >
+                  <template #trigger>
+                    <n-button quaternary circle type="error" :aria-label="`Yozuvni o'chirish: ${fmtDateTime(c.startedAt)}`">
+                      <template #icon><n-icon><TrashOutline /></n-icon></template>
+                    </n-button>
+                  </template>
+                  Yozuv butunlay o'chiriladi va uni qaytarib bo'lmaydi. Qo'ng'iroqning o'zi tarixda qoladi.
+                </n-popconfirm>
+              </div>
+              <span v-else-if="c.recordingDeletedAt" class="text-xs text-slate-400">Yozuv o'chirilgan · {{ fmtDateTime(c.recordingDeletedAt) }}</span>
               <span v-else-if="c.duration" class="text-xs text-slate-400">Yozuv hali yuklanmagan</span>
             </li>
           </ul>

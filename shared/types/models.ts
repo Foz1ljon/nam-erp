@@ -381,6 +381,7 @@ export interface PhoneCallDto extends BaseDoc {
   duration: number
   user: UserRef
   recording: { format: string; bytes: number; duration: number } | null
+  recordingDeletedAt?: string | null
 }
 
 export interface LeadDto extends BaseDoc {

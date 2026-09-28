@@ -204,7 +204,8 @@ const activeGroup = computed(() => {
 })
 const expandedKeys = ref<string[]>(activeGroup.value ? [activeGroup.value] : [])
 watch(activeGroup, (g) => {
-  if (g && !expandedKeys.value.includes(g)) expandedKeys.value = [...expandedKeys.value, g]
+  // Accordion: opening the current page's group closes the others.
+  if (g && !expandedKeys.value.includes(g)) expandedKeys.value = [g]
 })
 
 const userOptions = [
@@ -247,6 +248,7 @@ watch(() => route.fullPath, () => {
       </NuxtLink>
       <n-menu
         v-model:expanded-keys="expandedKeys"
+        accordion
         inverted
         :value="activeKey"
         :collapsed="collapsed"
@@ -272,7 +274,7 @@ watch(() => route.fullPath, () => {
               <template #icon><n-icon color="#cbd5e1"><CloseOutline /></n-icon></template>
             </n-button>
           </div>
-          <n-menu v-model:expanded-keys="expandedKeys" inverted :value="activeKey" :options="menuOptions" :indent="18" class="flex-1" />
+          <n-menu v-model:expanded-keys="expandedKeys" accordion inverted :value="activeKey" :options="menuOptions" :indent="18" class="flex-1" />
           <div class="border-t border-slate-700/70 p-4">
             <div class="flex items-center gap-3">
               <n-avatar round class="bg-blue-600!">{{ user?.fullName?.charAt(0) }}</n-avatar>

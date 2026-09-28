@@ -104,6 +104,30 @@ export async function uploadAudio(file: { data: Buffer; filename: string; type?:
   return verifiedUpload(res)
 }
 
+/** Permanently removes a recording from Cloudinary (also purges CDN copies). "not found" counts as done. */
+export async function deleteAudio(publicId: string): Promise<void> {
+  const cfg = config()
+  const params = {
+    invalidate: 'true',
+    public_id: publicId,
+    timestamp: String(Math.floor(Date.now() / 1000)),
+    type: DELIVERY_TYPE,
+  }
+  const form = new FormData()
+  for (const [k, v] of Object.entries(params)) form.append(k, v)
+  form.append('api_key', cfg.apiKey)
+  form.append('signature', sign(params, cfg.apiSecret))
+
+  const res = await $fetch<{ result: string }>(`https://api.cloudinary.com/v1_1/${cfg.cloudName}/video/destroy`, { method: 'POST', body: form }).catch(
+    (error: unknown) => {
+      throw createError({ statusCode: 502, statusMessage: 'Bad Gateway', message: `Cloudinary: ${errorText(error)}` })
+    },
+  )
+  if (res.result !== 'ok' && res.result !== 'not found') {
+    throw createError({ statusCode: 502, statusMessage: 'Bad Gateway', message: `Cloudinary yozuvni o'chirmadi: ${res.result}` })
+  }
+}
+
 /** Short-lived signed link to a private recording (Cloudinary "download" API). */
 export function audioDownloadUrl(audio: { publicId: string; format: string }, ttlSeconds = 3600): string {
   const cfg = config()
