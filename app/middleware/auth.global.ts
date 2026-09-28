@@ -18,7 +18,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!loggedIn.value) return navigateTo({ path: '/login', query: { redirect: to.fullPath } })
 
   // After every sign-in the introduction comes first (printing labels is exempt).
-  if (user.value?.onboarded === false && to.path !== '/welcome' && !to.path.startsWith('/print')) {
+  if (user.value?.onboarded === false && !useIntroDismissed().value && to.path !== '/welcome' && !to.path.startsWith('/print')) {
     return navigateTo('/welcome')
   }
 

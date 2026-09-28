@@ -18,6 +18,8 @@ onNuxtReady(() => {
         <n-notification-provider>
           <n-message-provider>
             <NuxtRouteAnnouncer />
+            <!-- Instant feedback while the next page loads its data (the old page stays until it is ready). -->
+            <NuxtLoadingIndicator color="#1d4ed8" :height="3" />
             <NuxtLayout>
               <NuxtPage />
             </NuxtLayout>

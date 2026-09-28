@@ -12,6 +12,10 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css', 'driver.js/dist/driver.css'],
 
   app: {
+    // Smooth page changes (styles in main.css; turned off for prefers-reduced-motion).
+    pageTransition: { name: 'page', mode: 'out-in' },
+    // Switching between the app shell and full-screen pages (login, introduction).
+    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       title: 'NamMotors ERP',
       htmlAttrs: { lang: 'uz' },

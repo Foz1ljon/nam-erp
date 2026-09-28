@@ -53,6 +53,8 @@ const AVATAR_COLORS: Record<Role, string> = {
 
 async function signIn(username: string, password: string) {
   await $fetch('/api/auth/login', { method: 'POST', body: { username, password } })
+  // A new sign-in shows the introduction again.
+  useIntroDismissed().value = false
   await refreshSession()
   const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') ? route.query.redirect : '/'
   await navigateTo(redirect)

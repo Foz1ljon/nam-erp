@@ -70,16 +70,23 @@ onKeyStroke('ArrowRight', () => (last.value ? finish() : go(index.value + 1)))
 onKeyStroke('ArrowLeft', () => go(index.value - 1))
 
 const finishing = ref(false)
+const introDismissed = useIntroDismissed()
 async function finish(to?: string) {
   if (finishing.value) return
   finishing.value = true
+  introDismissed.value = true
+  // Wait briefly so the flag is normally saved before leaving (a reload right after must not reopen
+  // the intro), but never longer than 3 s: a slow or failed request (cold start, network) must not
+  // trap the user here. The request itself keeps running in the background.
+  const saved = $fetch('/api/auth/onboarded', { method: 'POST', timeout: 15_000 })
+    .then(() => refreshSession())
+    .catch(() => {})
+  await Promise.race([saved, new Promise((resolve) => setTimeout(resolve, 3000))])
   try {
-    await $fetch('/api/auth/onboarded', { method: 'POST' })
-    await refreshSession()
+    await navigateTo(to ?? guide.value.home)
   } finally {
     finishing.value = false
   }
-  await navigateTo(to ?? guide.value.home)
 }
 </script>
 

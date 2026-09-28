@@ -11,6 +11,7 @@ export function useAuth() {
     await $fetch('/api/auth/logout', { method: 'POST' })
     await clear()
     useRefsStore().$reset()
+    useIntroDismissed().value = false
     await navigateTo('/login')
   }
 

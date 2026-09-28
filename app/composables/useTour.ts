@@ -19,7 +19,9 @@ export function stopTour() {
 
 export function useTour() {
   const { user } = useUserSession()
-  const route = useRoute()
+  // The router's current route, not the page's own: during a page transition the leaving page keeps
+  // its old route, and its delayed auto-start must not open a tour over the next page.
+  const current = useRouter().currentRoute
 
   function seenKey(key: TourKey) {
     return `${SEEN_PREFIX}${user.value?.id ?? 'anon'}:${key}`
@@ -43,10 +45,10 @@ export function useTour() {
 
   async function start(key: TourKey) {
     if (!import.meta.client) return
-    const path = route.path
+    const path = current.value.path
     const { driver } = await import('driver.js')
     // The user may have left the page while driver.js was loading.
-    if (route.path !== path) return
+    if (current.value.path !== path) return
     stopTour()
 
     // Skip steps whose target is hidden: buttons without permission, empty lists, mobile layout.
@@ -86,12 +88,16 @@ export function useTour() {
    */
   function autoStart(key: TourKey, delay = 600) {
     if (!import.meta.client || wasSeen(key)) return
-    const path = route.path
-    onNuxtReady(() => {
+    const path = current.value.path
+    const run = () =>
       setTimeout(() => {
-        if (route.path === path && !wasSeen(key) && !active) start(key)
+        if (current.value.path === path && !wasSeen(key) && !active) start(key)
       }, delay)
-    })
+    // First load: wait until hydration is done (the refresh loader is gone). In-app navigation: start on
+    // a fixed delay — onNuxtReady waits for browser idle time, which made tours pop up seconds late,
+    // over whatever the user was already doing.
+    if (useNuxtApp().isHydrating) onNuxtReady(run)
+    else run()
   }
 
   function resetAll() {
