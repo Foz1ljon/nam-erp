@@ -177,6 +177,15 @@ export type ProductUnitStatus = (typeof PRODUCT_UNIT_STATUSES)[number]
 
 // ---------------------------------------------------------------- B2B clients
 
+export const CALL_DIRECTIONS = ['in', 'out', 'missed', 'rejected'] as const
+export type CallDirection = (typeof CALL_DIRECTIONS)[number]
+export const CALL_DIRECTION_LABELS: Record<CallDirection, string> = {
+  in: "Kiruvchi qo'ng'iroq",
+  out: "Chiquvchi qo'ng'iroq",
+  missed: "O'tkazib yuborilgan qo'ng'iroq",
+  rejected: "Rad etilgan qo'ng'iroq",
+}
+
 export const CLIENT_KINDS = ['b2b', 'b2c'] as const
 export type ClientKind = (typeof CLIENT_KINDS)[number]
 export const CLIENT_KIND_LABELS: Record<ClientKind, string> = {

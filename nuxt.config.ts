@@ -31,6 +31,8 @@ export default defineNuxtConfig({
     demoLogins: true,
     /** Public HTTPS address of the ERP (for Telegram/Instagram webhooks). Can also be set in the UI. */
     publicBaseUrl: '',
+    /** Call recordings storage (NUXT_CLOUDINARY_CLOUD_NAME / _API_KEY / _API_SECRET; CLOUDINARY_KEY is read as the secret). */
+    cloudinary: { cloudName: '', apiKey: '', apiSecret: '' },
   },
 
   imports: {

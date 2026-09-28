@@ -30,16 +30,44 @@ const columnsByStatus = computed(() =>
 const dragging = ref<string | null>(null)
 const dropTarget = ref<LeadStatus | null>(null)
 
-async function drop(status: LeadStatus) {
-  const id = dragging.value
+// useAsyncData data is a shallowRef in Nuxt 4: replace the array instead of mutating a lead in place.
+function setStatus(id: string, status: LeadStatus) {
+  leads.value = leads.value.map((l) => (l._id === id ? { ...l, status } : l))
+}
+
+function onDragStart(event: DragEvent, id: string) {
+  dragging.value = id
+  // Firefox starts a drag only when some data is set.
+  event.dataTransfer?.setData('text/plain', id)
+  if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move'
+}
+
+function onDragEnd() {
   dragging.value = null
   dropTarget.value = null
+}
+
+function onDragOver(event: DragEvent, status: LeadStatus) {
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
+  dropTarget.value = status
+}
+
+/** dragleave also fires when the pointer moves onto a card inside the column; ignore that. */
+function onDragLeave(event: DragEvent, status: LeadStatus) {
+  const column = event.currentTarget as HTMLElement
+  if (column.contains(event.relatedTarget as Node | null)) return
+  if (dropTarget.value === status) dropTarget.value = null
+}
+
+async function drop(event: DragEvent, status: LeadStatus) {
+  const id = dragging.value ?? event.dataTransfer?.getData('text/plain')
+  onDragEnd()
   const lead = leads.value.find((l) => l._id === id)
   if (!lead || lead.status === status) return
   const previous = lead.status
-  lead.status = status
+  setStatus(lead._id, status)
   const res = await run(`/api/leads/${lead._id}/status`, { method: 'PATCH', body: { status } })
-  if (res === null) lead.status = previous
+  if (res === null) setStatus(lead._id, previous)
 }
 
 const tableColumns: DataTableColumns<LeadDto> = [
@@ -88,9 +116,9 @@ async function onSaved(id: string) {
         class="flex w-72 shrink-0 flex-col rounded-[10px] border bg-slate-100/70 transition"
         :class="dropTarget === col.status ? 'border-blue-500 bg-blue-50' : 'border-slate-200'"
         :aria-label="LEAD_STATUS_LABELS[col.status]"
-        @dragover.prevent="dropTarget = col.status"
-        @dragleave="dropTarget = null"
-        @drop.prevent="drop(col.status)"
+        @dragover.prevent="onDragOver($event, col.status)"
+        @dragleave="onDragLeave($event, col.status)"
+        @drop.prevent="drop($event, col.status)"
       >
         <header class="flex items-center justify-between px-3 py-2">
           <StatusTag kind="lead" :value="col.status" />
@@ -102,8 +130,10 @@ async function onSaved(id: string) {
             :key="lead._id"
             :to="`/crm/leads/${lead._id}`"
             draggable="true"
-            class="block rounded-lg border border-slate-200 bg-white p-3 text-slate-800 no-underline shadow-xs hover:border-blue-400"
-            @dragstart="dragging = lead._id"
+            class="block cursor-grab rounded-lg border border-slate-200 bg-white p-3 text-slate-800 no-underline shadow-xs hover:border-blue-400"
+            :class="{ 'opacity-50': dragging === lead._id }"
+            @dragstart="onDragStart($event, lead._id)"
+            @dragend="onDragEnd"
           >
             <div class="text-sm font-medium">{{ lead.title }}</div>
             <div class="mt-1 text-xs text-slate-500">{{ lead.contactName }}<template v-if="lead.company"> · {{ lead.company }}</template></div>

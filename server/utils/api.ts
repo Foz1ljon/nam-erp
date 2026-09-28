@@ -73,6 +73,11 @@ export function errorText(error: unknown): string {
   return e?.data?.message || e?.message || 'Xatolik'
 }
 
+/** MongoDB unique-index violation (E11000). */
+export function isDuplicateKey(error: unknown) {
+  return (error as { code?: number })?.code === 11000
+}
+
 export function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }

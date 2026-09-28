@@ -1,6 +1,7 @@
 // Serialized shapes returned by the API (ObjectIds are strings, dates are ISO strings).
 import type {
   ActivityType,
+  CallDirection,
   ChannelStatus,
   ChannelType,
   ClientKind,
@@ -370,6 +371,16 @@ export interface LeadActivityDto {
   done: boolean
   user: UserRef
   createdAt: string
+}
+
+export interface PhoneCallDto extends BaseDoc {
+  phone: string
+  contactName?: string
+  direction: CallDirection
+  startedAt: string
+  duration: number
+  user: UserRef
+  recording: { format: string; bytes: number; duration: number } | null
 }
 
 export interface LeadDto extends BaseDoc {

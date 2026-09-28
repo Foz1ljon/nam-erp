@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* The Android app (mobile/) has its own stylesheet. */
+@source not "../../../mobile";
 
 @theme {
   --color-primary: #1d4ed8;

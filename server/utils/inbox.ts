@@ -35,10 +35,6 @@ export interface IncomingMessage {
   direction: MessageDirection
 }
 
-function isDuplicateKey(error: unknown) {
-  return (error as { code?: number })?.code === 11000
-}
-
 /**
  * Stores a message from Telegram/Instagram. A contact writing for the first time becomes a new lead
  * assigned to the channel owner, so no enquiry is lost.

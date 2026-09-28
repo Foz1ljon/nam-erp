@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose'
 import {
   ACTIVITY_TYPES,
   AI_PROVIDERS,
+  CALL_DIRECTIONS,
   CHANNEL_STATUSES,
   CHANNEL_TYPES,
   CLIENT_KINDS,
@@ -389,6 +390,52 @@ const leadSchema = new Schema(
   opts,
 )
 export const LeadModel = model('Lead', leadSchema)
+
+// ---------------------------------------------------------------- Phone calls (Android app)
+
+/** A manager's phone signed in to the Android call-sync app. Authenticates with a bearer token. */
+const mobileDeviceSchema = new Schema(
+  {
+    user: { type: ObjectId, ref: 'User', required: true, index: true },
+    name: { type: String, trim: true },
+    tokenHash: { type: String, required: true, unique: true, select: false },
+    active: { type: Boolean, default: true },
+    lastSeenAt: { type: Date, default: null },
+  },
+  opts,
+)
+export const MobileDeviceModel = model('MobileDevice', mobileDeviceSchema)
+
+const phoneCallSchema = new Schema(
+  {
+    device: { type: ObjectId, ref: 'MobileDevice', required: true },
+    /** Id of the call in the phone's call log, so re-syncing never duplicates a call. */
+    deviceCallId: { type: String, required: true },
+    user: { type: ObjectId, ref: 'User', required: true },
+    lead: { type: ObjectId, ref: 'Lead', required: true, index: true },
+    phone: { type: String, required: true, trim: true },
+    contactName: { type: String, trim: true },
+    direction: { type: String, enum: CALL_DIRECTIONS, required: true },
+    startedAt: { type: Date, required: true },
+    /** Talk time in seconds (0 for missed/rejected calls). */
+    duration: { type: Number, default: 0, min: 0 },
+    recording: {
+      type: new Schema(
+        {
+          publicId: { type: String, required: true },
+          format: { type: String, required: true },
+          bytes: { type: Number, default: 0 },
+          duration: { type: Number, default: 0 },
+        },
+        { _id: false },
+      ),
+      default: null,
+    },
+  },
+  opts,
+)
+phoneCallSchema.index({ device: 1, deviceCallId: 1 }, { unique: true })
+export const PhoneCallModel = model('PhoneCall', phoneCallSchema)
 
 // ---------------------------------------------------------------- Messaging (Telegram / Instagram)
 

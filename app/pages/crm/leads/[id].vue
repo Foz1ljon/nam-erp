@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { CallOutline } from '@vicons/ionicons5'
-import type { LeadDto } from '#shared/types/models'
+import type { LeadDto, PhoneCallDto } from '#shared/types/models'
 import type { ActivityType, SalesStatus } from '#shared/utils/constants'
 
 definePageMeta({ permission: 'crm.use' })
 
-type LeadDetails = LeadDto & { orders: { _id: string; number: string; status: SalesStatus; total: number; paidAmount: number; createdAt: string }[] }
+type LeadDetails = LeadDto & {
+  orders: { _id: string; number: string; status: SalesStatus; total: number; paidAmount: number; createdAt: string }[]
+  calls: PhoneCallDto[]
+}
 
 const route = useRoute()
 const { can } = useAuth()
@@ -85,6 +88,28 @@ async function createOrder() {
             </n-timeline-item>
           </n-timeline>
           <n-empty v-if="!lead.activities.length" description="Hali faoliyat yo'q" />
+        </n-card>
+
+        <n-card v-if="lead.calls.length" size="small" title="Qo'ng'iroqlar va yozuvlar">
+          <ul class="m-0 flex list-none flex-col p-0">
+            <li v-for="c in lead.calls" :key="c._id" class="flex flex-col gap-2 border-t border-slate-100 py-3 first:border-t-0 first:pt-0">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span class="font-medium" :class="c.direction === 'missed' || c.direction === 'rejected' ? 'text-red-600' : ''">
+                  {{ CALL_DIRECTION_LABELS[c.direction] }}<template v-if="c.duration"> · {{ fmtDuration(c.duration) }}</template>
+                </span>
+                <span class="text-xs text-slate-500">{{ fmtDateTime(c.startedAt) }} · {{ c.phone }} · {{ c.user.fullName }}</span>
+              </div>
+              <audio
+                v-if="c.recording"
+                controls
+                preload="none"
+                class="h-9 w-full"
+                :src="`/api/calls/${c._id}/audio`"
+                :aria-label="`${CALL_DIRECTION_LABELS[c.direction]} yozuvi, ${fmtDateTime(c.startedAt)}`"
+              />
+              <span v-else-if="c.duration" class="text-xs text-slate-400">Yozuv hali yuklanmagan</span>
+            </li>
+          </ul>
         </n-card>
       </div>
 

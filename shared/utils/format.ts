@@ -29,3 +29,9 @@ export function fmtDateTime(value: string | number | Date | null | undefined): s
 export function roundQty(value: number): number {
   return Math.round(value * 1000) / 1000
 }
+
+/** Call length as "m:ss". */
+export function fmtDuration(seconds: number): string {
+  const s = Math.max(0, Math.round(seconds))
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
