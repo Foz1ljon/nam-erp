@@ -20,7 +20,8 @@ export default defineEventHandler(async (event) => {
       fullName: user.fullName,
       role: user.role,
       locationId: user.location ? String(user.location) : null,
-      onboarded: !!user.onboardedAt,
+      // The introduction opens after every sign-in; /api/auth/onboarded closes it for this session.
+      onboarded: false,
     },
     loggedInAt: Date.now(),
   })

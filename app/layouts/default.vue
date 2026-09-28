@@ -258,9 +258,11 @@ watch(() => route.fullPath, () => {
     </n-layout-sider>
 
     <!-- Phone: slide-in menu -->
-    <n-drawer v-model:show="mobileOpen" placement="left" width="min(300px, 86vw)" class="no-print">
+    <!-- The dark background sits on the drawer itself: the scroll container inside has no fixed height,
+         so a "min-h-full" child would only be as tall as the menu. -->
+    <n-drawer v-model:show="mobileOpen" placement="left" width="min(300px, 86vw)" class="no-print bg-slate-900!">
       <n-drawer-content body-content-style="padding:0" :native-scrollbar="false">
-        <div class="flex min-h-full flex-col bg-slate-900">
+        <div class="flex min-h-dvh flex-col bg-slate-900">
           <div class="flex h-14 items-center justify-between px-4">
             <NuxtLink to="/" class="flex items-center gap-2 text-lg font-bold text-white no-underline">
               <n-icon size="24" color="#60a5fa"><BusinessOutline /></n-icon>

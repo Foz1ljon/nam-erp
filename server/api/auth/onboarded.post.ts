@@ -1,4 +1,4 @@
-/** Marks the first-run introduction as seen (stored on the user, so it never shows again on any device). */
+/** Closes the introduction for the current session (it opens again on the next sign-in). */
 export default defineEventHandler(async (event) => {
   const me = await requireAuth(event)
   await UserModel.updateOne({ _id: me.oid, onboardedAt: null }, { onboardedAt: new Date() })
